@@ -62,28 +62,69 @@ router.post("/", async (req, res) => {
 
 // Loging In through it
 
-router.post('/login', async (req, res) => {
- console.log('Is this working')
+router.post("/login", async (req, res) => {
+  const { email, password } = req.body
   try {
-    
-    const user = UserModal.findOne({ email: req.body.email });
-    console.log(user);
-    if (!user) {
-      res.status(400).send("User not Login")
-      console.log("user not logined")     
-    }
-    else {
-        res.status(200).send("User Login Secceddfully")
-       console.log("user logined Secceccfully")
-       }
-    }
-    catch(err) {
-      res.status(400).send("User not Login")
-      console.log("user not logined")
-      console.log(err)
-  }
+    const myUser = await UserModal.findOne({ email: email });
+    console.log('user-->',myUser);
+    if (myUser) {
+      const isPasswordValid = bcrypt.compareSync(myUser.password,password)
+      if (isPasswordValid) {
+        myUser.password = undefined
+        
+        // generate token
+        const token = jwt.sign({
+          data: myUser,
+        }, 'fgvikdjshvnsdlchsdickjscksdcudhlcjso9cjwdmchwduhcw')
+        console.log(token)
 
-})
+
+        res.status(200).send({
+          status: 200,
+          token,
+          error: false, msg: "User is login", myUser
+        });
+      } else {
+        res
+          .status(401)
+          .send({ status: 401, error: true, msg: "Password is not valid" });
+      }
+    } else {
+      return res
+        .status(401)
+        .send({ status: 401, error: true, msg: "This email doesn't Exist" });
+    }
+  } catch (err) {
+    res
+      .status(500)
+      .send({ status: 500, error: err, msg: "internal sever error" });
+  }
+});
+
+
+
+// router.post('/login', async (req, res) => {
+//  console.log('Is this working')
+//   try {
+    
+//     const user = UserModal.findOne({ email: req.body.email });
+//     console.log(user);
+//     if (!user) {
+//       res.status(400).send("User not Login")
+//       console.log("user not logined")     
+//     }
+//     else {
+//         res.status(200).send("User Login Secceddfully")
+//        console.log("user logined Secceccfully")
+//        }
+//     }
+//     catch(err) {
+//       res.status(400).send("User not Login")
+//       console.log("user not logined")
+//       console.log(err)
+//   }
+
+// })
 
 router.delete("/:id", async (req, res) => {
   try {
