@@ -6,6 +6,7 @@ const port = 3000
 const app = express()
 dotenv.config()
 const userRoutes = require('./routes/user.js')
+const blogRoutes = require('./routes/blog.js')
 
 
 mongoose.connect(process.env.MONGOURL, {
@@ -29,6 +30,7 @@ app.get('/', (req, res) => {
 })
 
 app.use('/user', userRoutes)
+app.use('/blog', blogRoutes)
 // Connecting
 
 

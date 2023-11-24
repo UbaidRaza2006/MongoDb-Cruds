@@ -26,13 +26,14 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-router.get("/findByEmail", async (req, res) => {
-  const user = await UserModal.find({ email: req.query.email });
-  if (!user) {
+router.get("/?findByEmail", async (req, res) => {
+  const userByEmail = await UserModal.find({ email: req.query.email });
+  console.log(userByEmail);
+  if (!userByEmail) {
     res.status(500).send({ status: 500, error: true, msg: "user not found" });
   }
-  if (user) {
-    res.status(200).send({ status: 200, user });
+  if (userByEmail) {
+    res.status(200).send({ status: 200, userByEmail });
   }
 });
 
@@ -68,16 +69,16 @@ router.post("/login", async (req, res) => {
     const myUser = await UserModal.findOne({ email: email });
     console.log('user-->',myUser);
     if (myUser) {
-      const isPasswordValid = bcrypt.compareSync(myUser.password,password)
+      const isPasswordValid = bcrypt.compareSync(password , myUser.password)
       if (isPasswordValid) {
+        console.log("user logined")
         myUser.password = undefined
         
         // generate token
         const token = jwt.sign({
           data: myUser,
-        }, 'fgvikdjshvnsdlchsdickjscksdcudhlcjso9cjwdmchwduhcw')
+        }, process.env.JWT-SECRET)
         console.log(token)
-
 
         res.status(200).send({
           status: 200,
