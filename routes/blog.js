@@ -4,7 +4,7 @@ const BlogModal = require("../Model/blog");
 const authenticateJWT = require('../helpers/authenticateJWT')
 
 // Get All Blogs
-router.get("/",authenticateJWT ,async (req, res) => {
+router.get("/",async (req, res) => {
   const blogs = await BlogModal.find().populate('user').exec();
   res.status(200).send({
     status: 200,
