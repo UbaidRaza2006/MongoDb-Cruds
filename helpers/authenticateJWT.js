@@ -11,7 +11,7 @@ try{
         console.log('errrrrrrrrrrrrrrrr')
 
         const isVerified =  jwt.verify(token,
-            process.env.JWT-SECRET)
+            process.env.JWT_SECRET)
 console.log('isVerified',isVerified);
         if (isVerified && isVerified.data) {
             req.user = isVerified.data
